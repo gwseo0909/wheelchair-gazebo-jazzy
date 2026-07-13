@@ -1,0 +1,14 @@
+scan_to_scan_filter_chain:
+  ros__parameters:
+    filter1:
+      name: remove_wheelchair_body
+      type: laser_filters/LaserScanBoxFilter
+      params:
+        box_frame: base_link
+        min_x: -0.55
+        max_x: 0.45
+        min_y: -0.45
+        max_y: 0.45
+        min_z: -0.10
+        max_z: 1.30
+        invert: false

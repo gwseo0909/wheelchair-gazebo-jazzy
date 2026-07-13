@@ -57,6 +57,16 @@ def generate_launch_description():
             '/model/wheelchair/tf'
             '@tf2_msgs/msg/TFMessage'
             '[gz.msgs.Pose_V',
+
+            # Gazebo -> ROS 2 LiDAR
+            '/model/wheelchair/scan'
+            '@sensor_msgs/msg/LaserScan'
+            '[gz.msgs.LaserScan',
+
+            # Gazebo -> ROS 2 simulation clock
+            '/clock'
+            '@rosgraph_msgs/msg/Clock'
+            '[gz.msgs.Clock',
         ],
         remappings=[
             (
@@ -67,6 +77,27 @@ def generate_launch_description():
                 '/model/wheelchair/tf',
                 '/tf'
             ),
+            (
+                '/model/wheelchair/scan',
+                '/scan'
+            ),
+        ]
+    )
+
+    lidar_static_tf = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='lidar_static_tf',
+        output='screen',
+        arguments=[
+            '--x', '0.30',
+            '--y', '0.0',
+            '--z', '0.75',
+            '--roll', '0.0',
+            '--pitch', '0.0',
+            '--yaw', '0.0',
+            '--frame-id', 'base_link',
+            '--child-frame-id', 'wheelchair/lidar_link/lidar_sensor',
         ]
     )
 
@@ -78,4 +109,5 @@ def generate_launch_description():
 
         gazebo_launch,
         bridge,
+        lidar_static_tf,
     ])
