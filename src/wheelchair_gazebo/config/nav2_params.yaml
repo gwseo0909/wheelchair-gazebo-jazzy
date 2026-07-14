@@ -40,7 +40,7 @@ amcl:
 
 bt_navigator:
   ros__parameters:
-    global_frame: map
+    global_frame: odom
     robot_base_frame: base_link
     odom_topic: /odom
     bt_loop_duration: 10
@@ -230,36 +230,46 @@ local_costmap:
 global_costmap:
   global_costmap:
     ros__parameters:
-      update_frequency: 1.0
-      publish_frequency: 1.0
-      global_frame: map
+      update_frequency: 2.0
+      publish_frequency: 2.0
+      global_frame: odom
       robot_base_frame: base_link
-      robot_radius: 0.22
+
+      rolling_window: true
+      width: 6
+      height: 6
       resolution: 0.05
-      track_unknown_space: true
-      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+
+      footprint: "[[0.44, 0.39], [0.44, -0.39], [-0.46, -0.39], [-0.46, 0.39]]"
+
+      track_unknown_space: false
+
+      plugins:
+        - obstacle_layer
+        - inflation_layer
+
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
-        enabled: True
+        enabled: true
         observation_sources: scan
+
         scan:
-          topic: /scan
+          topic: /scan_filtered
           max_obstacle_height: 2.0
-          clearing: True
-          marking: True
+          clearing: true
+          marking: true
           data_type: "LaserScan"
           raytrace_max_range: 3.0
           raytrace_min_range: 0.0
           obstacle_max_range: 2.5
           obstacle_min_range: 0.0
-      static_layer:
-        plugin: "nav2_costmap_2d::StaticLayer"
-        map_subscribe_transient_local: True
+
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.7
-      always_send_full_costmap: True
+        inflation_radius: 0.70
+
+      always_send_full_costmap: true
 
 # The yaml_filename does not need to be specified since it going to be set by defaults in launch.
 # If you'd rather set it in the yaml, remove the default "map" value in the tb3_simulation_launch.py
@@ -314,7 +324,7 @@ behavior_server:
     assisted_teleop:
       plugin: "nav2_behaviors::AssistedTeleop"
     local_frame: odom
-    global_frame: map
+    global_frame: odom
     robot_base_frame: base_link
     transform_tolerance: 0.1
     simulate_ahead_time: 2.0

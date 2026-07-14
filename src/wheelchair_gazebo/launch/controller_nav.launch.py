@@ -38,6 +38,42 @@ def generate_launch_description():
         ],
     )
 
+    planner_server = Node(
+        package="nav2_planner",
+        executable="planner_server",
+        name="planner_server",
+        output="screen",
+        parameters=[
+            params_file,
+            {"use_sim_time": use_sim_time},
+        ],
+        remappings=remappings,
+    )
+
+    bt_navigator = Node(
+        package="nav2_bt_navigator",
+        executable="bt_navigator",
+        name="bt_navigator",
+        output="screen",
+        parameters=[
+            params_file,
+            {"use_sim_time": use_sim_time},
+        ],
+        remappings=remappings,
+    )
+
+    behavior_server = Node(
+        package="nav2_behaviors",
+        executable="behavior_server",
+        name="behavior_server",
+        output="screen",
+        parameters=[
+            params_file,
+            {"use_sim_time": use_sim_time},
+        ],
+        remappings=remappings,
+    )
+
     lifecycle_manager = Node(
         package="nav2_lifecycle_manager",
         executable="lifecycle_manager",
@@ -47,7 +83,12 @@ def generate_launch_description():
             {
                 "use_sim_time": use_sim_time,
                 "autostart": True,
-                "node_names": ["controller_server"],
+                "node_names": [
+                    "controller_server",
+                    "planner_server",
+                    "bt_navigator",
+                    "behavior_server",
+                ],
             }
         ],
     )
@@ -71,5 +112,8 @@ def generate_launch_description():
         ),
 
         controller_server,
+        planner_server,
+        bt_navigator,
+        behavior_server,
         lifecycle_manager,
     ])
